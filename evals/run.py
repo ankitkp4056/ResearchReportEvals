@@ -76,6 +76,30 @@ from evals.artifact.analysis_depth import (  # noqa: E402
 
 register_eval(_ae3_name, _ae3_fn, _ae3_artifacts)
 
+from evals.artifact.citation_completeness import (  # noqa: E402
+    EVAL_NAME as _ae4_name,
+    REQUIRED_ARTIFACTS as _ae4_artifacts,
+    evaluate_citation_completeness as _ae4_fn,
+)
+
+register_eval(_ae4_name, _ae4_fn, _ae4_artifacts)
+
+from evals.artifact.citation_correctness import (  # noqa: E402
+    EVAL_NAME as _ae5_name,
+    REQUIRED_ARTIFACTS as _ae5_artifacts,
+    evaluate_citation_correctness as _ae5_fn,
+)
+
+register_eval(_ae5_name, _ae5_fn, _ae5_artifacts)
+
+from evals.artifact.grounding_check import (  # noqa: E402
+    EVAL_NAME as _ae7_name,
+    REQUIRED_ARTIFACTS as _ae7_artifacts,
+    evaluate_grounding_check as _ae7_fn,
+)
+
+register_eval(_ae7_name, _ae7_fn, _ae7_artifacts)
+
 
 # ---------------------------------------------------------------------------
 # Runner
