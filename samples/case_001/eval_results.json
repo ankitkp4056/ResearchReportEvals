@@ -1,0 +1,10 @@
+[
+  {
+    "eval_name": "ae-6",
+    "score": 1.0,
+    "max_score": 1.0,
+    "passed": true,
+    "findings": [],
+    "reasoning": "Checked 16 inline citation(s) against 98 table row(s). 0 fabricated reference(s) found."
+  }
+]
