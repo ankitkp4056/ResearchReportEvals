@@ -52,6 +52,30 @@ from evals.artifact.fabricated_references import (  # noqa: E402
 
 register_eval(_ae6_name, _ae6_fn, _ae6_artifacts)
 
+from evals.artifact.planning_faithfulness import (  # noqa: E402
+    EVAL_NAME as _ae1_name,
+    REQUIRED_ARTIFACTS as _ae1_artifacts,
+    evaluate_planning_faithfulness as _ae1_fn,
+)
+
+register_eval(_ae1_name, _ae1_fn, _ae1_artifacts)
+
+from evals.artifact.section_coverage import (  # noqa: E402
+    EVAL_NAME as _ae2_name,
+    REQUIRED_ARTIFACTS as _ae2_artifacts,
+    evaluate_section_coverage as _ae2_fn,
+)
+
+register_eval(_ae2_name, _ae2_fn, _ae2_artifacts)
+
+from evals.artifact.analysis_depth import (  # noqa: E402
+    EVAL_NAME as _ae3_name,
+    REQUIRED_ARTIFACTS as _ae3_artifacts,
+    evaluate_analysis_depth as _ae3_fn,
+)
+
+register_eval(_ae3_name, _ae3_fn, _ae3_artifacts)
+
 
 # ---------------------------------------------------------------------------
 # Runner
