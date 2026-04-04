@@ -1,1 +1,3 @@
-Compare effectiveness of CBT vs DBT for treatment-resistant depression, focusing on remission rates, dropout rates, and long-term outcomes
+Create a report on AI-based early cancer detection methods, comparing
+performance across imaging, genomics, and multimodal approaches using
+metrics like AUC, sensitivity, and specificity.

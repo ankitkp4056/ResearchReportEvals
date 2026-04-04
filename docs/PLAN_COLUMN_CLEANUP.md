@@ -1,37 +1,34 @@
-# Plan: Column & Data Cleanup for Track A + Track B Evals
+# Plan: Column & Data Cleanup for Evals
 
 **Status:** Planning (no code changes yet)
 
 ---
 
-## Problem Summary
+## Background
 
-The actual `samples/case_001/table.csv` (2,521 rows, 25 columns) has different column names and far more columns than what the parsers were designed for. This causes:
-
-1. **`table_parser.py` fails immediately** on real data — column name mismatch
-2. **`citation_parser.py` can't match author-year citations** to table rows — same root cause
-3. **20 garbage columns** would flow into LLM prompts as `focus_columns` — wasting tokens, adding noise
-4. **Track A has a minor semantic mismatch** in AE-2 — plan is task-oriented, not section-oriented
+The actual `samples/case_001/table.csv` (2,521 rows, 25 columns) uses different column names than what the parsers were built for. This causes hard script crashes in two places. Separately, 17 noise columns inflate LLM prompts with useless tokens — but the LLM handles them fine, so that's a cost optimization, not a correctness fix.
 
 ### Impact by Eval
 
-| Eval | Status | Blocker |
-|------|--------|---------|
-| AE-1 (Planning Faithfulness) | OK | None — uses query + plan only |
-| AE-2 (Section Coverage) | Fragile | Plan format is task-oriented, not section headings |
-| AE-3 (Analysis Depth) | OK | None — uses query + report only |
-| AE-4 (Citation Completeness) | OK | No table.csv dependency |
-| AE-5 (Citation Correctness) | **BROKEN** | table_parser fails; can't load paper records |
-| AE-6 (Fabricated References) | Partial | Numeric citations work; author-year matching broken |
-| AE-7 (Grounding Check) | **BROKEN** | table_parser fails; focus_columns bloated with noise |
+| Eval | Status | Issue |
+|------|--------|-------|
+| AE-1 (Planning Faithfulness) | OK | — |
+| AE-2 (Section Coverage) | OK | Minor prompt design note (see P2) |
+| AE-3 (Analysis Depth) | OK | — |
+| AE-4 (Citation Completeness) | OK | — |
+| AE-5 (Citation Correctness) | **BROKEN** | `table_parser` crashes on column names |
+| AE-6 (Fabricated References) | **Partial** | Numeric citations work; author-year matching silently fails |
+| AE-7 (Grounding Check) | **BROKEN** | `table_parser` crashes on column names |
 
 ---
 
-## Issue 1: Column Name Mismatch in `table_parser.py`
+## P1: Hard Breaks (must fix before any eval runs)
+
+### P1-A: Column Name Mismatch in `table_parser.py`
 
 **File:** `evals/shared/table_parser.py:28`
 
-**Root cause:** `_METADATA_COLUMNS` expects exact lowercase names that don't exist in the CSV.
+`_METADATA_COLUMNS` expects exact lowercase names. The CSV uses different names.
 
 ```
 Expected (metadata set)     Actual CSV Header         Match?
@@ -43,11 +40,9 @@ doi                         DOI                       YES
 abstract                    Abstract                  YES
 ```
 
-**Result:** `parse_table()` raises `ValueError: CSV is missing required columns: authors, title, year` before any eval can run.
+**Result:** `parse_table()` raises `ValueError: CSV is missing required columns: authors, title, year` — hard crash before any eval logic runs.
 
-### Fix
-
-Expand `_METADATA_COLUMNS` into an alias map so each logical field can match multiple column names:
+**Fix:** Replace `_METADATA_COLUMNS` frozenset with an alias map:
 
 ```python
 _METADATA_ALIASES: dict[str, list[str]] = {
@@ -59,79 +54,67 @@ _METADATA_ALIASES: dict[str, list[str]] = {
 }
 ```
 
-Resolution logic: for each metadata field, scan the CSV headers (lowercased) against the alias list. First match wins. Everything that doesn't match any alias becomes a focus column.
+Resolution: for each metadata field, scan CSV headers (lowercased) against alias list. First match wins. Everything unmatched becomes a focus column.
 
-**Files changed:** `evals/shared/table_parser.py`
+**Files:** `evals/shared/table_parser.py`
 
 ---
 
-## Issue 2: Column Lookup Bug in `citation_parser.py`
+### P1-B: Column Lookup Bug in `citation_parser.py`
 
-**File:** `evals/shared/citation_parser.py` — `_get_col_ci()` helper and `match_citation_to_table()`
+**File:** `evals/shared/citation_parser.py:223-228`
 
-**Root cause:** `match_citation_to_table()` looks up `"authors"` and `"year"` in raw `dict` rows from `csv.DictReader`. The case-insensitive lookup compares the full lowercased key, but the actual keys are `"Author Names"` and `"Publication Year"` — these will never match `"authors"` or `"year"`.
+`match_citation_to_table()` calls `_get_col_ci(row, "authors")` which does exact lowercase key comparison. The raw dict from `csv.DictReader` has key `"Author Names"` → lowercased `"author names"` ≠ `"authors"`. Same for `"year"` vs `"publication year"`.
 
-```python
-# Current: exact lowercase match
-if k.strip().lower() == key_lower:  # "author names" != "authors" → MISS
+**Result:** Every author-year citation returns `None` — silently fails. AE-6 would flag real papers as fabricated.
+
+**Fix options:**
+
+- **(A) Normalize in `loader.py`** — have `load_case()` apply the same alias map when reading table.csv, so `CaseData.table` dicts always use canonical keys (`"title"`, `"authors"`, `"year"`, etc.). One normalization point, all consumers benefit.
+- **(B) Alias-aware `_get_col_ci()`** — make the lookup function know about aliases. Duplicates alias knowledge across two files.
+
+**Recommendation:** Option A. Normalize once in the loader. Then `_get_col_ci()` works as-is because the keys are already canonical.
+
+**Files:** `evals/shared/loader.py` (primary), `evals/shared/citation_parser.py` (may simplify)
+
+---
+
+### P1 Execution
+
+```
+Step 1: table_parser.py — replace _METADATA_COLUMNS with _METADATA_ALIASES
+Step 2: loader.py — normalize CaseData.table dict keys via same alias map
+Step 3: Verify parse_table() succeeds on samples/case_001/table.csv
+Step 4: Verify match_citation_to_table() matches author-year citations
 ```
 
-### Fix
+### P1 Unblocks
 
-Apply the same alias map from Issue 1. Either:
-
-- **(A) Normalize at the loader level:** Have `load_case()` normalize CSV column names when reading `table.csv` into `list[dict]`, so downstream code always sees `"title"`, `"authors"`, `"year"`, etc. This is the cleanest fix — one normalization point, all consumers benefit.
-- **(B) Alias-aware lookup in citation_parser:** Make `_get_col_ci()` aware of multiple possible column names. Works but duplicates alias knowledge.
-
-**Recommendation:** Option A — normalize in `loader.py`. The `CaseData.table` field should contain dicts with canonical lowercase keys. This fixes both `citation_parser` and any future consumer.
-
-**Files changed:** `evals/shared/loader.py` (primary), `evals/shared/citation_parser.py` (simplify lookup)
+- **AE-5** can load paper records and match citations to papers
+- **AE-6** correctly matches author-year citations (not just numeric)
+- **AE-7** can load all papers as grounding sources
 
 ---
 
-## Issue 3: Garbage Focus Columns
+## P2: Token Optimization (nice-to-have, not blocking)
+
+### P2-A: Garbage Focus Columns
 
 **File:** `evals/shared/table_parser.py:170-172`
 
-**Root cause:** `table_parser` treats ALL non-metadata columns as `focus_columns`. With 25 CSV columns and only 5 metadata matches, that's 20 focus columns — most of which are identifiers and metadata noise.
+After P1, `parse_table()` will work — but `focus_columns` will contain 17 noise columns alongside the 3 useful ones. The LLM can ignore the noise (it won't produce wrong answers), but it wastes tokens, especially in AE-7 which sends all papers.
 
-### Full Column Audit
+**Column audit:**
 
-| Column | Category | Useful for LLM Judging? |
-|--------|----------|------------------------|
-| Paper Title | Metadata (alias → `title`) | Yes — context |
-| Author Names | Metadata (alias → `authors`) | Yes — matching |
-| Publication Year | Metadata (alias → `year`) | Yes — matching |
-| DOI | Metadata | No — identifier only |
-| Abstract | Metadata | **Yes — primary content** |
-| AI Methodology and Architecture | Focus | **Yes — extracted content** |
-| Performance Metrics | Focus | **Yes — extracted content** |
-| Dataset and Validation Approach | Focus | **Yes — extracted content** |
-| Paper Link | Noise | No |
-| PDF Link | Noise | No |
-| Publication Type | Noise | No |
-| Publication Title | Noise | No (journal name) |
-| Open Access | Noise | No |
-| Citations count | Noise | No |
-| Google Scholar ID | Noise | No |
-| PubMed ID | Noise | No |
-| PMC ID | Noise | No |
-| References | Noise | No |
-| Grants | Noise | No |
-| arXiv ID | Noise | No |
-| Updated Date | Noise | No |
-| Primary Category | Noise | No |
-| Categories | Noise | No |
-| Source | Noise | No |
-| Relevance | Noise | No |
+| Useful Focus Columns (3) | Garbage (17) |
+|--------------------------|-------------|
+| AI Methodology and Architecture | Paper Link, PDF Link, Publication Type, Publication Title |
+| Performance Metrics | Open Access, Citations count, Google Scholar ID |
+| Dataset and Validation Approach | PubMed ID, PMC ID, References, Grants |
+| | arXiv ID, Updated Date, Primary Category |
+| | Categories, Source, Relevance |
 
-**Content-bearing columns (3):** AI Methodology and Architecture, Performance Metrics, Dataset and Validation Approach
-
-**Garbage columns (17):** Everything else that isn't metadata or content
-
-### Fix
-
-Add an exclusion set to `table_parser.py` — columns that are known identifiers/metadata noise and should never be focus columns:
+**Fix:** Add a denylist of known noise columns. A column becomes a focus column only if it's not in the alias map AND not in the denylist. New content columns from future agent runs auto-include; known noise is filtered.
 
 ```python
 _SKIP_COLUMNS: frozenset[str] = frozenset({
@@ -142,91 +125,30 @@ _SKIP_COLUMNS: frozenset[str] = frozenset({
 })
 ```
 
-A column becomes a focus column only if its lowercased name is NOT in `_METADATA_ALIASES` and NOT in `_SKIP_COLUMNS`. This keeps the parser general — new content columns from future agent runs will automatically become focus columns, but known noise is filtered.
-
-**Alternative considered:** Allowlist instead of denylist (only include columns explicitly named as focus). Rejected because focus columns vary per query topic — we can't predict them. A denylist of known noise is more maintainable.
-
-**Files changed:** `evals/shared/table_parser.py`
+**Files:** `evals/shared/table_parser.py`
 
 ---
 
-## Issue 4: AE-2 Plan Format Mismatch (Track A)
+### P2-B: AE-2 Plan Format Mismatch
 
-**Severity:** Medium — not a blocker but affects eval quality.
+**Severity:** Low — not a parser issue, just a prompt design note for when AE-2 is implemented.
 
-**Root cause:** The sprint doc assumes `todo.md` contains section headings / topic areas that can be mapped to report sections. But the actual `todo.md` is task-oriented:
+The sprint doc assumes `todo.md` has section headings mappable to report sections. The actual `todo.md` is task-oriented ("Search scholarly literature...", "Extract performance metrics...") while the report is section-structured ("1. Introduction", "2. Background..."). The LLM must infer that task items imply topic coverage.
 
-```markdown
-## Literature Search
-  - [x] Search scholarly literature on AI cancer detection
-  - [x] Focus on imaging, genomics, and multimodal approaches
-## Extract Insights
-  - [x] Extract performance metrics from search results
-## Report Writing
-  - [x] Write a structured report with comparisons
-```
+**Fix:** Handle in AE-2's prompt design (no parser changes):
+- Send full plan text to LLM, not just extracted headings
+- Instruct: "The plan may describe tasks rather than sections. Identify research topics implied by the plan, then check if the report covers each one."
 
-While the report is section-structured:
-```markdown
-## 1. Introduction
-## 2. Background and Theoretical Foundations
-## 3. Methods and Approaches in the Literature
-## 4. Key Findings and Comparative Analysis
-## 5. Discussion
-...
-```
-
-The LLM must infer that "Focus on imaging, genomics, multimodal" maps to sections 3.2-3.4 and 4.1-4.3. This is indirect but workable.
-
-### Fix
-
-No parser change needed. Handle in AE-2's prompt design:
-
-1. Don't just extract headings from todo.md — extract **topic areas and research focus items** from bullet points too
-2. Instruct the LLM explicitly: "The plan may describe tasks rather than sections. Identify the research topics and focus areas implied by the plan, then check if the report covers each one."
-3. Consider sending the full plan text to the LLM rather than pre-parsed headings, so the LLM can interpret task items as implicit topic requirements
-
-**Files changed:** `evals/artifact/section_coverage.py` (when implemented — prompt design only)
+**Files:** `evals/artifact/section_coverage.py` (when implemented)
 
 ---
 
-## Execution Order
+### P2 Execution
 
-Changes are independent and can be done in any order, but this sequence minimizes rework:
+P2 can be done anytime. No other work depends on it.
 
 ```
-Step 1: Fix table_parser.py
-        - Add _METADATA_ALIASES for column name resolution
-        - Add _SKIP_COLUMNS to filter garbage from focus_columns
-        - Verify parse_table() succeeds on actual table.csv
-
-Step 2: Fix loader.py
-        - Normalize CaseData.table dict keys to canonical lowercase names
-        - This automatically fixes citation_parser column lookups
-
-Step 3: Simplify citation_parser.py
-        - Remove _get_col_ci() workarounds since loader now normalizes keys
-        - Verify match_citation_to_table() works with normalized dicts
-
-Step 4: Verify end-to-end
-        - Run parse_table() on samples/case_001/table.csv
-        - Confirm 3 focus columns, not 20
-        - Run extract_citations() + match_citation_to_table() on report
-        - Confirm citation matching works for both numeric and author-year formats
-
-Step 5: Note for AE-2 implementation
-        - When building section_coverage.py, use full plan text in prompt
-        - Design prompt to handle task-oriented plans (not just section lists)
+Step 1: table_parser.py — add _SKIP_COLUMNS denylist
+Step 2: Verify focus_columns count drops from 20 to 3
+Step 3: (AE-2 note — apply during Track A implementation)
 ```
-
----
-
-## What This Unblocks
-
-After these fixes:
-- **AE-5** can load paper records, match citations to papers, send (claim + title + abstract + 3 focus columns) to LLM
-- **AE-6** can match author-year citations to table rows (currently only numeric works)
-- **AE-7** can load all papers as grounding sources with clean content fields
-- **AE-2** has guidance for prompt design that handles task-oriented plans
-
-No changes needed for AE-1, AE-3, or AE-4 — they don't touch table.csv.

@@ -6,5 +6,362 @@
     "passed": true,
     "findings": [],
     "reasoning": "Checked 16 inline citation(s) against 98 table row(s). 0 fabricated reference(s) found."
+  },
+  {
+    "eval_name": "ae-1",
+    "score": 1.0,
+    "max_score": 1.0,
+    "passed": true,
+    "findings": [
+      {
+        "severity": "info",
+        "message": "Research question fully captured (yes)",
+        "location": "research_question_captured"
+      },
+      {
+        "severity": "info",
+        "message": "Purpose correctly identified (comparison)",
+        "location": "purpose_identified"
+      },
+      {
+        "severity": "info",
+        "message": "Scope is appropriate (just_right)",
+        "location": "scope"
+      }
+    ],
+    "reasoning": "The plan clearly captures the user's research question regarding AI-based early cancer detection methods, explicitly mentioning imaging, genomics, and multimodal approaches. It also identifies the purpose as a comparison, as it aims to evaluate and contrast performance metrics like AUC, sensitivity, and specificity across these approaches. The scope is appropriate, focusing on the specified areas of interest in the query without introducing unrelated topics.\n\nDimension scores: research_question=1.00, purpose=1.00, scope=1.00"
+  },
+  {
+    "eval_name": "ae-2",
+    "score": 1.0,
+    "max_score": 1.0,
+    "passed": true,
+    "findings": [
+      {
+        "severity": "info",
+        "message": "Topic fully covered: AI Cancer Detection Literature",
+        "location": "Introduction"
+      },
+      {
+        "severity": "info",
+        "message": "Topic fully covered: Imaging Approaches in AI Cancer Detection",
+        "location": "Section 3.2 and 4.1"
+      },
+      {
+        "severity": "info",
+        "message": "Topic fully covered: Genomics Approaches in AI Cancer Detection",
+        "location": "Section 3.3 and 4.2"
+      },
+      {
+        "severity": "info",
+        "message": "Topic fully covered: Multimodal Approaches in AI Cancer Detection",
+        "location": "Section 3.4 and 4.3"
+      },
+      {
+        "severity": "info",
+        "message": "Topic fully covered: Performance Metrics and Comparison",
+        "location": "Section 4"
+      },
+      {
+        "severity": "info",
+        "message": "Topic fully covered: Clinical Implications of AI in Cancer Detection",
+        "location": "Sections 5.1 and 5.2"
+      },
+      {
+        "severity": "info",
+        "message": "Topic fully covered: Methodological Considerations",
+        "location": "Section 5.4"
+      },
+      {
+        "severity": "info",
+        "message": "Topic fully covered: Limitations and Evidence Gaps",
+        "location": "Section 5.3"
+      },
+      {
+        "severity": "info",
+        "message": "Topic fully covered: Recommendations for Future Research",
+        "location": "Section 6.1"
+      },
+      {
+        "severity": "info",
+        "message": "Topic fully covered: Clinical Implementation Strategies",
+        "location": "Section 6.2"
+      },
+      {
+        "severity": "info",
+        "message": "Topic fully covered: Policy and Economic Considerations",
+        "location": "Section 6.3"
+      }
+    ],
+    "reasoning": "All the distinct research topic areas from the research plan are adequately covered in the report. Each topic is addressed with sufficient depth and detail as specified in the plan, including literature coverage, specific approaches to AI in cancer detection, performance metrics, implications, limitations, and future recommendations.\n\nCoverage: 11 full, 0 partial, 0 missing out of 11 topics"
+  },
+  {
+    "eval_name": "ae-3",
+    "score": 1.0,
+    "max_score": 1.0,
+    "passed": true,
+    "findings": [
+      {
+        "severity": "info",
+        "message": "Criterion satisfied: Cross-paper analysis: Are studies compared directly on key dimensions?",
+        "location": "comparison"
+      },
+      {
+        "severity": "info",
+        "message": "Criterion satisfied: Dimensions: Are relevant comparison dimensions explicitly addressed?",
+        "location": "comparison"
+      },
+      {
+        "severity": "info",
+        "message": "Criterion satisfied: Synthesis: Does the report synthesize findings to reach comparative conclusions?",
+        "location": "comparison"
+      }
+    ],
+    "reasoning": "The report provides a comprehensive comparison of AI-based early cancer detection methods across imaging, genomics, and multimodal approaches. It directly analyzes key performance metrics such as AUC, sensitivity, and specificity, effectively synthesizing findings to offer a clear comparative conclusion across different methodologies. Detailed summary tables facilitate direct comparison, and the analysis covers multiple studies, thus meeting all criteria for a comparison purpose.\n\nClassified purpose: comparison\nDepth score: 5/5 (normalized: 1.00)\nCriteria met: 3, missed: 0"
+  },
+  {
+    "eval_name": "ae-4",
+    "score": 0.42857142857142855,
+    "max_score": 1.0,
+    "passed": false,
+    "findings": [
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Artificial intelligence (AI) has emerged as a transformative technology in early cancer detection, demonstrating performance that matches or exceeds human clinicians across multiple modalities.",
+        "location": "Executive Summary"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: This comprehensive report synthesizes evidence from 30 top-ranked studies to compare AI performance across three major approaches: imaging-based detection, genomics and liquid biopsy methods, and multimodal fusion systems.",
+        "location": "Executive Summary"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Imaging-based AI systems achieve the highest and most consistent performance metrics, with area under the curve (AUC) values ranging from 0.90 to 0.956 and pooled sensitivities exceeding 94% in lung cancer screening.",
+        "location": "Executive Summary"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Genomics and liquid biopsy approaches demonstrate high specificity (78\u201394%) but variable sensitivity (62\u201395%), particularly for early-stage disease.",
+        "location": "Executive Summary"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Multimodal fusion systems that integrate imaging, clinical biomarkers, and demographic data achieve the highest discrimination, with AUCs reaching 0.93\u20130.97, and demonstrate superiority over single-modality approaches in controlled comparisons.",
+        "location": "Executive Summary"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: AI-assisted mammography reduces false negatives by 9.4% and false positives by 5.7% compared to radiologists alone.",
+        "location": "Executive Summary"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Multimodal systems like LungGuard outperform radiologists by approximately 5% in accuracy for early-stage lung cancer detection.",
+        "location": "Executive Summary"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Liquid biopsy methods offer complementary molecular insights that imaging may miss, though sensitivity for stage I\u2013II cancers remains a limitation.",
+        "location": "Executive Summary"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Early cancer detection significantly improves treatment outcomes, yet traditional screening programs face substantial challenges.",
+        "location": "1. Introduction"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Deep learning, particularly convolutional neural networks (CNNs), has revolutionized medical image analysis by automatically learning hierarchical feature representations from raw pixel data.",
+        "location": "2.2 AI Architectures in Medical Imaging"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Liquid biopsy methods analyze circulating tumor-derived materials in blood or other body fluids, offering a noninvasive alternative or complement to imaging.",
+        "location": "2.3 Liquid Biopsy and Genomic Approaches"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Machine learning classifiers trained on these molecular features can detect cancer-specific signals even at early stages, though sensitivity remains a challenge for low tumor burden cases.",
+        "location": "2.3 Liquid Biopsy and Genomic Approaches"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: The evidence base comprises 30 top-ranked studies identified through systematic searches of SciSpace, Google Scholar, and PubMed, representing 98 unique papers after deduplication and relevance ranking.",
+        "location": "1. Introduction"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Imaging studies predominantly employ deep convolutional neural networks trained on large annotated datasets.",
+        "location": "3.2 Imaging-Based AI Methodologies"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Validation approaches vary widely.",
+        "location": "3.2 Imaging-Based AI Methodologies"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: The most rigorous studies employ large external validation cohorts that are independent of training data, multi-center designs to assess generalizability, and prospective evaluation in real screening populations.",
+        "location": "3.2 Imaging-Based AI Methodologies"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Most liquid biopsy studies employ case-control designs with enriched cancer prevalence, which inflates apparent performance metrics compared to true screening populations.",
+        "location": "3.3 Genomics and Liquid Biopsy Methodologies"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Multimodal systems that integrate heterogeneous data through various fusion architectures.",
+        "location": "3.4 Multimodal Fusion Methodologies"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Imaging-based AI demonstrates the most mature and consistently high performance across cancer types.",
+        "location": "4.1 Imaging-Based AI Performance"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Imaging AI benefits from large, well-curated training datasets and mature deep learning architectures.",
+        "location": "4.1 Imaging-Based AI Performance"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Genomics and liquid biopsy approaches offer complementary molecular insights but demonstrate more variable performance, particularly for early-stage disease.",
+        "location": "4.2 Genomics and Liquid Biopsy Performance"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Notably, this system detected cancers that were missed by imaging, highlighting the complementary nature of molecular and imaging approaches.",
+        "location": "4.2 Genomics and Liquid Biopsy Performance"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Multimodal AI systems that integrate imaging, clinical, and molecular data demonstrate the highest discrimination and most robust performance.",
+        "location": "4.3 Multimodal Fusion Performance"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: In a controlled observer study, LungGuard demonstrated approximately 5% higher accuracy than radiologists, suggesting that multimodal integration provides clinically meaningful improvements over imaging alone.",
+        "location": "4.3 Multimodal Fusion Performance"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Direct comparison across modalities reveals distinct performance profiles and optimal use cases for each approach.",
+        "location": "4.4 Cross-Modality Comparative Analysis"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Real-time AI assistance shows promise to support endoscopists in identifying subtle early lesions.",
+        "location": "4.5 Cancer Type-Specific Insights"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: The evidence synthesized in this report demonstrates that AI-based early cancer detection has matured to the point of clinical utility across multiple modalities and cancer types.",
+        "location": "5.1 Interpretation of Findings"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Combining AI with human readers improves sensitivity while maintaining acceptable specificity.",
+        "location": "5.2 Clinical Implications and Optimal Workflows"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: For patients at elevated risk or with indeterminate findings, multimodal systems that integrate imaging, clinical biomarkers, and molecular data provide the highest discrimination and most robust risk stratification.",
+        "location": "5.2 Clinical Implications and Optimal Workflows"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: High-specificity liquid biopsy assays are optimally positioned as reflex tests for imaging-detected abnormalities, improving positive predictive value and reducing unnecessary biopsies.",
+        "location": "5.2 Clinical Implications and Optimal Workflows"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Many studies employ retrospective designs with enriched case sets that do not reflect true screening prevalence, inflating apparent performance metrics.",
+        "location": "5.3 Limitations and Evidence Gaps"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: External validation on independent cohorts from different institutions and populations is essential to assess generalizability.",
+        "location": "5.4 Methodological Considerations"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: The enriched case-control designs common in liquid biopsy studies substantially inflate apparent performance compared to true screening populations.",
+        "location": "5.4 Methodological Considerations"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: A test with 95% sensitivity and 95% specificity in a case-control study with 50% prevalence would have a positive predictive value of only 16% in a screening population with 1% prevalence, leading to 84% false-positive results among positive tests.",
+        "location": "5.4 Methodological Considerations"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Large-scale prospective trials comparing AI-assisted screening to standard care are urgently needed to establish clinical utility, cost-effectiveness, and impact on patient outcomes.",
+        "location": "6.1 Research Priorities"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Adoption of standardized reporting guidelines (e.g., STARD-AI, CLAIM) would improve comparability across studies and enable more robust meta-analyses.",
+        "location": "6.1 Research Priorities"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Validation in diverse populations is essential to ensure equitable performance and avoid algorithmic bias that could exacerbate health disparities.",
+        "location": "6.1 Research Priorities"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Initial deployment should focus on high-volume screening applications (mammography, lung CT) where imaging AI has the strongest evidence base and demonstrated clinical benefit.",
+        "location": "6.2 Clinical Implementation Recommendations"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Continuous monitoring of AI performance in clinical deployment is essential to detect dataset shift, equipment changes, or population differences that could degrade performance.",
+        "location": "6.2 Clinical Implementation Recommendations"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Development of appropriate reimbursement models for AI-assisted screening and diagnosis is necessary to incentivize clinical adoption.",
+        "location": "6.3 Policy and Economic Considerations"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Policies should ensure equitable access to AI-enhanced cancer screening across socioeconomic and geographic populations.",
+        "location": "6.3 Policy and Economic Considerations"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Artificial intelligence has demonstrated substantial promise in early cancer detection across imaging, genomics, and multimodal approaches.",
+        "location": "7. Conclusion"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Imaging-based AI achieves the highest and most consistent performance, with AUCs of 0.90\u20130.956 and demonstrated superiority to radiologists in large prospective evaluations.",
+        "location": "7. Conclusion"
+      },
+      {
+        "severity": "warning",
+        "message": "Uncited claim: Multimodal fusion systems that integrate imaging, clinical biomarkers, and demographic data achieve the highest discrimination (AUCs 0.93\u20130.97) and outperform single-modality approaches in controlled comparisons.",
+        "location": "7. Conclusion"
+      }
+    ],
+    "reasoning": "Extracted 77 claim(s). 33 have citations, 44 do not. Completeness: 0.43"
+  },
+  {
+    "eval_name": "ae-5",
+    "score": 0.0,
+    "max_score": 1.0,
+    "passed": false,
+    "findings": [],
+    "reasoning": "Eval crashed: Traceback (most recent call last):\n  File \"/home/ankitkp4056/Documents/Projects/ankitkp4056/ResearchReportEvals/evals/run.py\", line 162, in run_evals\n    result = entry[\"fn\"](case)\n             ^^^^^^^^^^^^^^^^^\n  File \"/home/ankitkp4056/Documents/Projects/ankitkp4056/ResearchReportEvals/evals/artifact/citation_correctness.py\", line 150, in evaluate_citation_correctness\n    paper_records = parse_table(str(case.case_path / \"table.csv\"))\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ankitkp4056/Documents/Projects/ankitkp4056/ResearchReportEvals/evals/shared/table_parser.py\", line 81, in parse_table\n    _validate_required_columns(header_map, path)\n  File \"/home/ankitkp4056/Documents/Projects/ankitkp4056/ResearchReportEvals/evals/shared/table_parser.py\", line 134, in _validate_required_columns\n    raise ValueError(\nValueError: CSV /home/ankitkp4056/Documents/Projects/ankitkp4056/ResearchReportEvals/samples/case_001/table.csv is missing required columns: authors, title, year\n"
+  },
+  {
+    "eval_name": "ae-7",
+    "score": 0.0,
+    "max_score": 1.0,
+    "passed": false,
+    "findings": [],
+    "reasoning": "Eval crashed: Traceback (most recent call last):\n  File \"/home/ankitkp4056/Documents/Projects/ankitkp4056/ResearchReportEvals/evals/run.py\", line 162, in run_evals\n    result = entry[\"fn\"](case)\n             ^^^^^^^^^^^^^^^^^\n  File \"/home/ankitkp4056/Documents/Projects/ankitkp4056/ResearchReportEvals/evals/artifact/grounding_check.py\", line 126, in evaluate_grounding_check\n    paper_records = parse_table(str(case.case_path / \"table.csv\"))\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ankitkp4056/Documents/Projects/ankitkp4056/ResearchReportEvals/evals/shared/table_parser.py\", line 81, in parse_table\n    _validate_required_columns(header_map, path)\n  File \"/home/ankitkp4056/Documents/Projects/ankitkp4056/ResearchReportEvals/evals/shared/table_parser.py\", line 134, in _validate_required_columns\n    raise ValueError(\nValueError: CSV /home/ankitkp4056/Documents/Projects/ankitkp4056/ResearchReportEvals/samples/case_001/table.csv is missing required columns: authors, title, year\n"
   }
 ]
